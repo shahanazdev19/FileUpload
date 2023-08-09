@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div>
+    <form id="uploadForm" enctype="multipart/form-data">
+    <input type="radio" name="uploadType" value="file" checked> Upload File
+    <input type="radio" name="uploadType" value="folder"> Upload Folder
+    <br>
+    <input type="file" id="fileInput" name="fileInput" multiple>
+    <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+    <button type="submit">Upload</button>
+</form>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#uploadForm").submit(function (event) {
+                event.preventDefault();
+                var folderInput = $("#folderInput")[0];
+
+                if (folderInput.files.length === 0) {
+                    alert("Please select a folder to upload.");
+                    return;
+                }
+
+                var zip = new JSZip();
+                var folderName = folderInput.files[0].name;
+
+                function addFilesToZip(folder) {
+                    var files = folder.files;
+                    for (var i = 0; i < files.length; i++) {
+                        zip.file(files[i].webkitRelativePath, files[i]);
+                    }
+                }
+
+                addFilesToZip(folderInput);
+
+                zip.generateAsync({ type: "blob" }).then(function (content) {
+                    var formData = new FormData();
+                    formData.append("zipFile", content, folderName + ".zip");
+
+                    $.ajax({
+                        url: "/FileUpload/UploadProject", // Replace with your actual endpoint
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function () {
+                            alert("Folder uploaded successfully!");
+                        },
+                        error: function () {
+                            alert("An error occurred while uploading the folder.");
+                        }
+                    });
+                });
+            });
+
+            $("input[name='uploadType']").change(function () {
+                var uploadType = $("input[name='uploadType']:checked").val();
+                if (uploadType === "file") {
+                    $("#fileInput").show();
+                    $("#folderInput").hide();
+                } else if (uploadType === "folder") {
+                    $("#fileInput").hide();
+                    $("#folderInput").show();
+                }
+            });
+        });
+    </script>
+}
+

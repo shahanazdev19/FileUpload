@@ -1,0 +1,30 @@
+﻿@*@using FileStorageSystem.Model.Models;
+@model List<FileModel>*@
+@{
+    Layout = null;
+}
+<h3>Hello</h3>
+@*<table id="listview">
+    <tr class="noselect">
+        <th id="two">
+            Name
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr class="t-row noselect">
+            <td class="two">
+                <img width="24" height="24" alt="@item.Category.ToString()"
+                     src="~/images/fileicon.png" style="vertical-align: middle;" />
+                <span style="padding-left: 2px;">
+                    @item.Name
+                </span>
+            </td>
+            <td>
+                <input type="hidden" name="fullPath" value="@item.FullPath" />
+
+            </td>
+        </tr>
+    }
+</table>*@

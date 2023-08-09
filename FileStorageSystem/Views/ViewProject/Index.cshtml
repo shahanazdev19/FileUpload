@@ -1,0 +1,93 @@
+﻿@using FileStorageSystem.Model.Models;
+@model List<FileModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div>
+
+
+    <h2>Project Files</h2>
+
+    @*    <ul>
+    @foreach (var item in Model)
+    {
+    <li class="projectName" id="@item.Id">@item.Name</li>
+    }
+    </ul>*@
+    <div id="listpane">
+        <table id="listview">
+            <tr class="noselect">
+                <th id="two">
+                    Name
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr class="t-row noselect">
+                    <td class="two">
+                        <img width="24" height="24" alt="@item.Category.ToString()"
+                             src="~/images/fileicon.png" style="vertical-align: middle;" />
+                        <span style="padding-left: 2px;">
+                            @item.Name
+                        </span>
+                    </td>
+                    <td>
+                        <input type="hidden" name="fullPath" value="@item.FullPath" />
+
+                    </td>
+
+                </tr>
+
+            }
+
+        </table>
+    </div>
+    
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+        $(function () {
+            $.extend($.fn.disableTextSelect = function () {
+                return this.each(function () {
+                    if ($.browser.mozilla) {//Firefox
+                        $(this).css('MozUserSelect', 'none');
+                    } else if ($.browser.msie) {//IE
+                        $(this).bind('selectstart', function () { return false; });
+                    } else {//Opera, etc.
+                        $(this).mousedown(function () { return false; });
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $("#listview .t-row").click(function () {
+                $("#listview tr").removeClass("t-state-selected");
+                $(this).toggleClass("t-state-selected");
+
+            });
+
+
+            $("#listview .t-row").dblclick(function () {                
+                var filename = jQuery("input[name=fullPath]", this).val();
+                $.ajax({
+                    url: "/ViewProject/GetFiles", 
+                    method: "POST",
+                    data: { path: filename },
+                    dataType: 'text',
+                    success: function (data) {
+                        debugger;
+                        $('#listpane').html(data);
+                    },
+                    error: function () {
+                        alert("An error occurred while opening the folder.");
+                    }
+                });
+            });
+        });
+    </script>
+}
+
