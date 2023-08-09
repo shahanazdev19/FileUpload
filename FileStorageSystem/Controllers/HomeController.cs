@@ -15,6 +15,8 @@ namespace FileStorageSystem.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.userId = HttpContext.Session.GetString("userId");
+            ViewBag.fullName = HttpContext.Session.GetString("fullName");
             return View();
         }
 
@@ -27,6 +29,13 @@ namespace FileStorageSystem.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult logOut()
+        {
+            HttpContext.Session.Remove("userId");
+            HttpContext.Session.Remove("fullName");
+            return RedirectToAction("index", "Login");
         }
     }
 }
